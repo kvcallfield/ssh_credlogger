@@ -10,7 +10,7 @@ An expect + sh script that logs passwords, passphrases, 2fa codes to a local fil
 - Ensure your alias links to the correct path for this file
 - Ensure the "spawn" command below links to the correct path for the renamed ssh_snoop.sh
 
-** Things to improve:**
+**Things to improve:**
 
 - passcode1 is echoed after passcode2 entered 
 - passcode2 does not steam out to tty, we only see passcode1 come out after a delay in one fell swoop
