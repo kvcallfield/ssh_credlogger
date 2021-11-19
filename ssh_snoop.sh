@@ -12,15 +12,15 @@ if [[ $? -eq 0 ]]; then
     ssh_directly=1 
 fi
 
-# bastion displays a special banner
-echo $1 | grep bastion >/dev/null 2>&1
+# account for a host that prompts for 2fa
+echo $1 | grep host_that_asks_for_2fa >/dev/null 2>&1
 if [[ $? -eq 0 ]] && [ "$ssh_directly" = "0" ]; then
-    echo "You are attempting to access a Box system. Access is provided to authorized parties only. Unauthorized access is strictly prohibited. These systems are monitored and violations will be investigated "
+    echo "banner that this host normally prints out here"
 fi
 
-# compute-jump and git use ssh keys, not passwords
+# account for hosts that prompt for passphrases and not passwords
 if [ "$ssh_directly" = "0" ]; then
-    echo $1 | grep -e "compute-jump" -e "git" >/dev/null 2>&1
+    echo $1 | grep -e "host_that_asks_for_ssh_key_passphrases" -e "host2" >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         echo -n "Password: "
         read -s pass
@@ -37,9 +37,9 @@ fi
 
 # output a blank line to match formatting with the real ssh
 
-# only ask for 2fa if they're ssh'ing to bastion
+# only ask for 2fa if they're ssh'ing to a 2fa-asking host
 if [ "$ssh_directly" = "0" ]; then
-    echo $1 | grep bastion >/dev/null 2>&1
+    echo $1 | grep host_that_asks_for_2fa >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         echo
         echo "Duo two-factor login for $(whoami): "
