@@ -13,7 +13,7 @@ An expect + sh script that logs passwords, passphrases, 2fa codes to a local fil
 **Things to improve:**
 
 - passcode1 is echoed after passcode2 entered 
-    - passcode2 does not steam out to tty, we only see passcode1 come out after a delay in one fell swoop
+    - passcode2 does not stream out to tty, we only see passcode1 come out after a delay in one fell swoop
     - when entering passcode2 the user may notice the "key" cursor instead of the normal cursor
 
 - if user gives options for ssh like ssh -v, we go right to running the real ssh and do not record creds
