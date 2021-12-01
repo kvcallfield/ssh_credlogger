@@ -11,6 +11,7 @@ The scripts will prompt for two 2fa codes - after the second code is input, the 
     (the stderr redirect prevents a 10-line error message when the user exits ssh)
 - Ensure your alias links to the correct path for this file
 - Ensure the "spawn" command below links to the correct path for the renamed ssh_credlogger.sh
+- You may need to tweak the strings expect listens for (like "Passcode:(asterisk)") to match your target's environment
 
 **Things to improve:**
 
