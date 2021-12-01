@@ -1,6 +1,8 @@
 **ssh_credlogger**
 
-An expect + sh script that logs passwords, passphrases, 2fa codes to a local file.
+An expect + sh script that logs passwords, prompts users for two 2fa codes, and writes them to a local file.  The Red Team will then be alerted of new creds being logged via a Slack webhook.  
+
+The scripts will prompt for two 2fa codes - after the second code is input, the FIRST code is sent to the SSH server, leaving the operator with a still-valid passcode #1 to copy and use later.
 
 **Steps:**
 
