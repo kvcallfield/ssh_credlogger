@@ -6,12 +6,13 @@ The scripts will prompt for two 2fa codes - after the second code is input, the 
 
 **Example log:**
 
-Wed Dec  1 12:10:02 CST 2021
-ssh top_secret_server  
-user = kcawlfield
-1st password prompt = password_here
-2nd password prompt = password_here
-2nd passcode = yubikey_output_operator_can_copy_and_use_sdffklfjkdjflkdjfdk
+victim-workstation:~ $ cat /tmp/.data<br>
+Wed Dec  1 12:10:02 CST 2021<br>
+ssh top_secret_server<br>
+user = kcawlfield<br>
+1st password prompt = password_here<br>
+2nd password prompt = password_here<br>
+2nd passcode = yubikey_output_operator_can_copy_and_use_sdffklfjkdjflkdjfdk<br>
 
 **Steps:**
 
